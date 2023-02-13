@@ -1,27 +1,68 @@
-# [TwitterBio.com](https://www.twitterbio.com/)
+# Prompt Chaining App with Vercel, OpenAI, and Steamship
 
-This project generates Twitter bios for you using AI.
+This example shows how to implement a prompt chaining app using Next.js, API Routes, [OpenAI](https://beta.openai.com/docs/api-reference/completions/create), and [Steamship](https://www.steamship.com).
 
-[![Twitter Bio Generator](./public/screenshot.png)](https://www.twitterbio.com)
+This project generates Twitter bios for you using AI, based on the [Twitter Bio Generator](https://www.twitterbio.com) template.
 
-## How it works
+### Components
 
-This project uses the [OpenAI GPT-3 API](https://openai.com/api/) (specifically, text-davinci-003) and [Vercel Edge functions](https://vercel.com/features/edge-functions) with streaming. It constructs a prompt based on the form and user input, sends it to the GPT-3 API via a Vercel Edge function, then streams the response back to the application.
+- Next.js
+- OpenAI API (REST endpoint)
+- API Routes (Edge runtime)
+- Steamship API (AI orchestration stack)
 
-Video and blog post coming soon on how to build apps with OpenAI and Vercel Edge functions!
+## How to Use
 
-## Running Locally
+### Run create-next-app
 
-After cloning the repo, go to [OpenAI](https://beta.openai.com/account/api-keys) to make an account and put your API key in a file called `.env`.
-
-Then, run the application in the command line and it will be available at `http://localhost:3000`.
+Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
 
 ```bash
-npm run dev
+npx create-next-app --example https://github.com/steamship-core/vercel-examples/tree/main/prompt-app
+# or
+yarn create next-app --example https://github.com/steamship-core/vercel-examples/tree/prompt-app
 ```
 
-## One-Click Deploy
+### Deploy your Steamship Stack
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+Steamship is an AI orchestration stack that auto-manages prompts, image generation, embeddings, vector search, and more.
+Think of it as a host for Vercel-style API functions, but with a managed, stateful, AI stack built-in.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Nutlope/twitterbio&env=OPENAI_API_KEY&project-name=twitter-bio-generator&repo-name=twitterbio)
+Deploy your Steamship stack from this project's root folder with:
+
+```bash
+pip install steamship
+cd steamship
+ship deploy
+```
+
+### Set your environment variables
+
+Rename [`.env.example`](.env.example) to `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Then:
+
+1. update `STEAMSHIP_API_KEY` with your [Steamship API Key](https://steamship/account/api).
+2. update `STEAMSHIP_PACKAGE_HANDLE` with the package name you selected when deploying your Steamship Stack
+
+### Run or Deploy your Next.js Stack
+
+Run your Next.js stack in development mode:
+
+```bash
+npm install
+npm run dev
+
+# or
+
+yarn
+yarn dev
+```
+
+The app should be up and running at http://localhost:3000.
+
+When you like what you see, deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=steamship-prompt-app) ([Documentation](https://nextjs.org/docs/deployment)).
