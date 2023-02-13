@@ -6,7 +6,7 @@ This example shows how to implement a prompt chaining app using Next.js, API Rou
 
 This project generates Twitter bios for you using AI, based on the [Twitter Bio Generator](https://www.twitterbio.com) template.
 
-![Screen Shot](https://steamship.com/data/templates/langchain-on-vercel/prompt-app-card.png)]
+![Screen Shot](https://steamship.com/data/templates/langchain-on-vercel/prompt-app-card.png)
 
 ### Components
 
