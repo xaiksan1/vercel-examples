@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import DropDown, { VibeType } from "../components/DropDown";
-import Footer from "../components/Footer";
 import Github from "../components/GitHub";
-import Header from "../components/Header";
 import LoadingDots from "../components/LoadingDots";
 import ResizablePanel from "../components/ResizablePanel";
 
@@ -139,12 +137,12 @@ const Home: NextPage = () => {
                           <div
                             className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
                             onClick={() => {
-                              navigator.clipboard.writeText(generatedBio);
+                              navigator.clipboard.writeText(generatedBio as string);
                               toast("Bio copied to clipboard", {
                                 icon: "✂️",
                               });
                             }}
-                            key={generatedBio}
+                            key={generatedBio as string}
                           >
                             <p>{generatedBio}</p>
                           </div>
@@ -157,7 +155,6 @@ const Home: NextPage = () => {
           </AnimatePresence>
         </ResizablePanel>
       </main>
-      <Footer />
     </div>
   );
 };

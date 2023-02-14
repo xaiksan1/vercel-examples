@@ -32,16 +32,24 @@ const Layout: FC<LayoutProps> = ({
       <footer className="py-10 w-full mt-auto border-t flex items-center justify-center bg-accents-1 z-20">
         <span className="text-primary">Created by</span>
         <a
-          href="https://vercel.com"
-          aria-label="Vercel.com Link"
+          href="https://steamship.com"
+          aria-label="Steamship.com Link"
           target="_blank"
           rel="noreferrer"
-          className="text-black"
+          className="text-black "
         >
           <Logo
             className="inline-block h-6 ml-3 text-primary"
-          />
-        </a>
+          /> Steamship
+        </a>. Based on the
+        <a
+          href="https://vercel.com/templates/next.js/twitter-bio"
+          target="_blank"
+          rel="noreferrer"
+          className="text-black ml-1 mr-1"
+        > the twitter-bio
+        </a> template.
+
       </footer>
     </div>
   )
