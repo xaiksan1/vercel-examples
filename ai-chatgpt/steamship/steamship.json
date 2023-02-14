@@ -1,9 +1,9 @@
 {
 	"type": "package",
-	"handle": "ted-test-nextjs-chatbot",
-	"version": "0.0.3",
+	"handle": "",
+	"version": "",
 	"description": null,
-	"author": "doug",
+	"author": "",
 	"entrypoint": "Unused",
 	"public": true,
 	"build_config": {

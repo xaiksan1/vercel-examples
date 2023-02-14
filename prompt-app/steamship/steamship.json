@@ -1,9 +1,9 @@
 {
 	"type": "package",
-	"handle": "ted-test-twitter-bio",
-	"version": "0.0.5",
+	"handle": "",
+	"version": "",
 	"description": null,
-	"author": "doug",
+	"author": "",
 	"entrypoint": "Unused",
 	"public": true,
 	"build_config": {
