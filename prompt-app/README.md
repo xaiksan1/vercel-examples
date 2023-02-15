@@ -24,7 +24,7 @@ Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packag
 ```bash
 npx create-next-app --example https://github.com/steamship-core/vercel-examples/tree/main/prompt-app
 # or
-yarn create next-app --example https://github.com/steamship-core/vercel-examples/tree/prompt-app
+yarn create next-app --example https://github.com/steamship-core/vercel-examples/tree/main/prompt-app
 ```
 
 ### Deploy your Steamship Stack
