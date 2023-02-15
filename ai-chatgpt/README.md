@@ -48,7 +48,7 @@ cp .env.example .env.local
 
 Then:
 
-1. update `STEAMSHIP_API_KEY` with your [Steamship API Key](https://steamship/account/api).
+1. update `STEAMSHIP_API_KEY` with your [Steamship API Key](https://www.steamship.com/account/api).
 2. update `STEAMSHIP_PACKAGE_HANDLE` with the package name you selected when deploying your Steamship Stack
 
 ### Run or Deploy your Next.js Stack
