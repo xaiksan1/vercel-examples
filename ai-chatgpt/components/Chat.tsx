@@ -49,6 +49,7 @@ export function Chat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
+  const [error, setError] = useState<String | undefined>(undefined);
 
   useEffect(() => {
     if (!cookie[COOKIE_NAME]) {
@@ -61,6 +62,7 @@ export function Chat() {
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
     setLoading(true)
+    setError(undefined);
     const newMessages = [
       ...messages,
       { message: message, who: 'user' } as Message,
@@ -78,16 +80,27 @@ export function Chat() {
         user: cookie[COOKIE_NAME],
       }),
     })
-    const data = await response.json()
 
-    // strip out white spaces from the bot message
-    const botNewMessage = data.text.trim()
+    setLoading(false);
 
-    setMessages([
-      ...newMessages,
-      { message: botNewMessage, who: 'bot' } as Message,
-    ])
-    setLoading(false)
+    if (!response.ok) {
+      setError(response.statusText);
+      return;
+    }
+
+    const {text, error} = await response.json()
+
+    if (error) {
+      setError(error)
+    } else if (text) {
+      // strip out white spaces from the bot message
+      const botNewMessage = text.trim()
+
+      setMessages([
+        ...newMessages,
+        { message: botNewMessage, who: 'bot' } as Message,
+      ])
+    }
   }
 
   return (
@@ -108,6 +121,17 @@ export function Chat() {
         setInput={setInput}
         sendMessage={sendMessage}
       />
+
+      { error && (
+          <div className="rounded-md bg-red-50 p-4">
+            <div className="flex">
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Error</h3>
+                <p>{error}</p>
+              </div>
+            </div>
+          </div>
+      )}
     </div>
   )
 }

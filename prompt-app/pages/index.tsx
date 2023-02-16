@@ -30,11 +30,13 @@ const Home: NextPage = () => {
       body: JSON.stringify({bio, vibe})
     });
 
+    setLoading(false);
+
     if (!response.ok) {
       setError(response.statusText);
+      return;
     }
 
-    setLoading(false);
 
     // This data is a ReadableStream
     const {bios, error} = await response.json();

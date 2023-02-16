@@ -22,6 +22,13 @@ export default async function handler(
     const uniqueUserToken = "user-1234";
     const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
 
+    if (!process.env.STEAMSHIP_API_KEY) {
+      return res.json({ error: "Please set the STEAMSHIP_API_KEY env variable." })
+    }
+    if (!packageHandle) {
+      return res.json({ error: "Please set the STEAMSHIP_PACKAGE_HANDLE env variable." })
+    }
+
     const pkg = await getSteamshipPackage({
       workspace: `${packageHandle}-${uniqueUserToken}`,
       pkg: packageHandle
