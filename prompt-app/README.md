@@ -2,7 +2,9 @@
 
 [![Steamship](https://raw.githubusercontent.com/steamship-core/python-client/main/badge.svg)](https://www.steamship.com/build/langchain-on-vercel?utm_source=github&utm_medium=badge&utm_campaign=github_repo&utm_id=github_vercel_repo_prompt_app)
 
-This example shows how to implement a prompt chaining app using Next.js, API Routes, [OpenAI](https://beta.openai.com/docs/api-reference/completions/create), and [Steamship](https://www.steamship.com).
+[View Demo Site](https://full-stack-prompt-app.vercel.app/)
+
+Launch a demo or sell a prompt-based product while protecting your prompt & using async + chain support. This example shows how to implement a prompt chaining app using Next.js, API Routes, [OpenAI](https://beta.openai.com/docs/api-reference/completions/create), and [Steamship](https://www.steamship.com).
 
 This project generates Twitter bios for you using AI, based on the [Twitter Bio Generator](https://www.twitterbio.com) template.
 
@@ -11,9 +13,10 @@ This project generates Twitter bios for you using AI, based on the [Twitter Bio 
 ### Components
 
 - Next.js
-- OpenAI API (REST endpoint)
-- API Routes (Edge runtime)
+- Tailwind CSS
+- API Routes
 - Steamship API (AI orchestration stack)
+- OpenAI API (via Steamship)
 
 ## How to Use
 

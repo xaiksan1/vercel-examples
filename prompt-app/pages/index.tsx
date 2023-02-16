@@ -14,11 +14,13 @@ const Home: NextPage = () => {
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Professional");
   const [generatedBios, setGeneratedBios] = useState<String[]>([]);
+  const [error, setError] = useState<String | undefined>(undefined);
 
   const generateBio = async (e: any) => {
     e.preventDefault();
     setGeneratedBios([]);
     setLoading(true);
+    setError(undefined);
 
     const response = await fetch("/api/generate", {
       method: "POST",
@@ -29,18 +31,19 @@ const Home: NextPage = () => {
     });
 
     if (!response.ok) {
-      throw new Error(response.statusText);
+      setError(response.statusText);
     }
-
-    // This data is a ReadableStream
-    const {bios} = await response.json();
-    if (!bios) {
-      return;
-    }
-
-    setGeneratedBios(bios)
 
     setLoading(false);
+
+    // This data is a ReadableStream
+    const {bios, error} = await response.json();
+    if (error) {
+      setError(error)
+    } else if (bios) {
+      setGeneratedBios(bios)
+    }
+
   };
 
   return (
@@ -64,6 +67,16 @@ const Home: NextPage = () => {
           Generate your next Twitter bio in seconds
         </h1>
         <p className="text-slate-500 mt-5">47,118 bios generated so far.</p>
+        { error && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Error</h3>
+                  <p>{error}</p>
+                </div>
+              </div>
+            </div>
+        )}
         <div className="max-w-xl w-full">
           <div className="flex mt-10 items-center space-x-3">
             <Image

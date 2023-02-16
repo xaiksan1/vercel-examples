@@ -2,17 +2,29 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { getSteamshipPackage } from '@steamship/steamship-nextjs'
 
 
+
 export default async function handler(req: NextRequest, res: NextResponse) {
   const { bio, vibe } = req.body as any;
 
-  // Fetch a stub to the Steamship-hosted backend.
-  // Use a different workspace name per-user to provide data isolation.
-  const pkg = await getSteamshipPackage({
-    workspace: 'use-unique-workspace-handle-per-user', 
-    pkg: process.env.STEAMSHIP_PACKAGE_HANDLE as string
-  })
+  if (!bio) {
+    return res.json({ error: "Please enter your bio." })
+  }
+
+  if (!vibe) {
+    return res.json({ error: "Please enter your vibe." })
+  }
 
   try {
+    // Fetch a stub to the Steamship-hosted backend.
+    // Use a different workspace name per-user to provide data isolation.
+    const uniqueUserToken = "user-1234";
+    const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
+
+    const pkg = await getSteamshipPackage({
+      workspace: `${packageHandle}-${uniqueUserToken}`,
+      pkg: packageHandle
+    })
+
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
     const resp = await pkg.invoke('generate', {bio, vibe})
 
@@ -25,7 +37,16 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     return res.json({ bios })
   } catch (ex) {
     // @ts-ignore
-    return res.json({ text: "There was an error responding to you." })
+    const awaitedEx = (await ex) as any;
+
+    if (awaitedEx?.response?.data?.status?.statusMessage) {
+      return res.json({ error: awaitedEx?.response?.data?.status?.statusMessage })
+    }
+
+    console.log(typeof awaitedEx)
+    console.log(awaitedEx)
+
+    return res.json({ error: "There was an error generating your profile." })
   }
 }
 
