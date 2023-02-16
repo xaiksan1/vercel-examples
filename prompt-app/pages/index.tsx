@@ -17,7 +17,7 @@ const Home: NextPage = () => {
 
   const generateBio = async (e: any) => {
     e.preventDefault();
-    setGeneratedBios("");
+    setGeneratedBios([]);
     setLoading(true);
 
     const response = await fetch("/api/generate", {
