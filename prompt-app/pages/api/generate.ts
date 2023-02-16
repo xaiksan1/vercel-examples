@@ -1,9 +1,11 @@
-import { type NextRequest, NextResponse } from 'next/server'
+import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSteamshipPackage } from '@steamship/steamship-nextjs'
 
 
-
-export default async function handler(req: NextRequest, res: NextResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
   const { bio, vibe } = req.body as any;
 
   if (!bio) {
@@ -33,10 +35,8 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     const bios = resp.data
 
     // Return JSON to the web client.
-    // @ts-ignore
     return res.json({ bios })
   } catch (ex) {
-    // @ts-ignore
     const awaitedEx = (await ex) as any;
 
     if (awaitedEx?.response?.data?.status?.statusMessage) {
@@ -46,7 +46,7 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     console.log(typeof awaitedEx)
     console.log(awaitedEx)
 
-    return res.json({ error: "There was an error generating your profile." })
+    return res.json({ error: `There was an error generating your profile.` })
   }
 }
 
