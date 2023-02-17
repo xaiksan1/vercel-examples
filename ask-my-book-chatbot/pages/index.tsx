@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 function Home() {
   const router = useRouter()
   const {db_id} = router.query
-  process.env.DB_ID = db_id
+  process.env.DB_ID = db_id as string
 
   const errorMessage = (
         <div className="rounded-md bg-red-50 p-4">
