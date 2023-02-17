@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSteamshipPackage } from '@steamship/steamship-nextjs'
 
@@ -35,18 +36,17 @@ export default async function handler(
       return res.json({ error: "Please set the INDEX_NAME env variable." })
     }
 
-    const config = new Map<string, any>();
-    config.set('index_name', indexName);
-
     const pkg = await getSteamshipPackage({
       workspace: `${packageHandle}-${uniqueUserToken}`,
       pkg: packageHandle,
-      config: config
+      config: {index_name: indexName} as Map<string, any>
     })
 
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
+    // @ts-ignore
     const resp = await pkg.invoke('generate', {
       question: message,
+      // @ts-ignore
       chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
     })
 
