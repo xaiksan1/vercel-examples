@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   const { messages } = req.body as any;
   var {dbId} = req.body as string;
-  dbId = dbId || process.env.INDEX_NAME as string;
+  dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
 
   if (!messages) {
     return res.json({ error: "Please enter a message." })
