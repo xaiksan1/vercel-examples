@@ -35,10 +35,13 @@ export default async function handler(
       return res.json({ error: "Please set the INDEX_NAME env variable." })
     }
 
+    const config = new Map<string, any>();
+    config.set('index_name', indexName);
+
     const pkg = await getSteamshipPackage({
       workspace: `${packageHandle}-${uniqueUserToken}`,
       pkg: packageHandle,
-      config: {"index_name": indexName}
+      config: config
     })
 
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
