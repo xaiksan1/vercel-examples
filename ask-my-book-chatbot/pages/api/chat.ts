@@ -7,6 +7,8 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   const { messages } = req.body as any;
+  var {dbId} = req.body as string;
+  dbId = dbId || process.env.INDEX_NAME as string;
 
   if (!messages) {
     return res.json({ error: "Please enter a message." })
@@ -23,7 +25,6 @@ export default async function handler(
     // Use a different workspace name per-user to provide data isolation.
     const uniqueUserToken = "user-1234";
     const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
-    const dbId = process.env.DB_ID as string;
 
     if (!process.env.STEAMSHIP_API_KEY) {
       return res.json({ error: "Please set the STEAMSHIP_API_KEY env variable." })

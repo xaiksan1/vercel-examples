@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 
 function Home() {
   const router = useRouter()
-  const {db_id} = router.query
-  process.env.DB_ID = db_id as string
+  let {dbId} = router.query
+  dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
 
   const errorMessage = (
         <div className="rounded-md bg-red-50 p-4">
@@ -29,7 +29,8 @@ function Home() {
 
       <section className="flex flex-col gap-3">
         <div className="lg">
-            { typeof db_id == "undefined" ? errorMessage : <Chat/> }
+            { typeof dbId == "undefined" && errorMessage}
+             <Chat dbId={dbId as string}/>
         </div>
       </section>
     </Page>

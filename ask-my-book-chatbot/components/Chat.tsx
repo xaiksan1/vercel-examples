@@ -44,7 +44,12 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
-export function Chat() {
+type ChatProps = {
+    dbId: string;
+}
+
+export function Chat(props: ChatProps) {
+  const {dbId} = props
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -78,6 +83,7 @@ export function Chat() {
       body: JSON.stringify({
         messages: last10messages,
         user: cookie[COOKIE_NAME],
+        dbId: dbId,
       }),
     })
 
