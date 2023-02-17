@@ -49,7 +49,6 @@ const Layout: FC<LayoutProps> = ({
           className="text-black ml-1 mr-1"
         > the ai-gpt3-chatbot
         </a> template.
-
       </footer>
     </div>
   )

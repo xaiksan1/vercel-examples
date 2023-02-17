@@ -9,7 +9,7 @@ const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3-steamship'
 export const initialMessages: Message[] = [
   {
     who: 'bot',
-    message: 'Hi! I’m a persistent, multi-user AI assistant. Ask me anything!',
+    message: 'Hi! I read your book, parsed it with LangChain and Steamship. Ask me a question!',
   },
 ]
 

@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSteamshipPackage } from '@steamship/steamship-nextjs'
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
@@ -24,7 +23,7 @@ export default async function handler(
     // Use a different workspace name per-user to provide data isolation.
     const uniqueUserToken = "user-1234";
     const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
-    const indexName = process.env.INDEX_NAME as string;
+    const dbId = process.env.DB_ID as string;
 
     if (!process.env.STEAMSHIP_API_KEY) {
       return res.json({ error: "Please set the STEAMSHIP_API_KEY env variable." })
@@ -32,14 +31,15 @@ export default async function handler(
     if (!packageHandle) {
       return res.json({ error: "Please set the STEAMSHIP_PACKAGE_HANDLE env variable." })
     }
-     if (!indexName) {
-      return res.json({ error: "Please set the INDEX_NAME env variable." })
+
+    if (!dbId) {
+      return res.json({ error: "Unknown index selected." })
     }
 
     const pkg = await getSteamshipPackage({
       workspace: `${packageHandle}-${uniqueUserToken}`,
       pkg: packageHandle,
-      config: {index_name: indexName} as Map<string, any>
+      config: {index_name: dbId} as Map<string, any>
     })
 
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")

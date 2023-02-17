@@ -7,12 +7,11 @@ import Layout, { getLayout } from '../components/Layout'
 import '@vercel/examples-ui/globals.css'
 
 function App({ Component, pageProps }: AppProps) {
-  // const Layout = getLayout<LayoutProps>(Component)
 
   return (
     <Layout
-      title="ai-chatgpt"
-      path="ai-chatgpt"
+      title="ask-my-book-chatbot"
+      path="ask-my-book-chatbot"
       description="ai-chatgpt"
     >
       <Component {...pageProps} />
