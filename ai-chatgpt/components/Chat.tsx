@@ -59,6 +59,37 @@ export function Chat() {
     }
   }, [cookie, setCookie])
 
+  const pollMessage = async (taskId: string, workspace: string) => {
+    console.log("Polling", taskId, workspace)
+    const response = await fetch('/api/check_job', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify({taskId, workspace})
+    })
+
+    if (!response.ok) {
+      setError(response.statusText);
+      return;
+    }
+
+    const {state, statusMessage, output} = await response.json()
+
+    if (state == 'succeeded') {
+      setMessages((oldMessages) => [
+        ...oldMessages,
+        { message: output.trim(), who: 'bot' } as Message
+      ])
+    } else if (state == 'failed') {
+      setError(statusMessage);
+      return;
+    } else if (state == 'running') {
+      setTimeout(async () => {
+        pollMessage(taskId, workspace)
+      }, 300);
+    }
+
+  }
+
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
     setLoading(true)
@@ -70,7 +101,7 @@ export function Chat() {
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10)
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch('/api/submit_job', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -88,18 +119,12 @@ export function Chat() {
       return;
     }
 
-    const {text, error} = await response.json()
+    const {taskId, workspace, error} = await response.json()
 
     if (error) {
       setError(error)
-    } else if (text) {
-      // strip out white spaces from the bot message
-      const botNewMessage = text.trim()
-
-      setMessages([
-        ...newMessages,
-        { message: botNewMessage, who: 'bot' } as Message,
-      ])
+    } else {
+      pollMessage(taskId, workspace)
     }
   }
 
