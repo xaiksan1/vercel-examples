@@ -68,6 +68,7 @@ export function Chat() {
     })
 
     if (!response.ok) {
+      setLoading(false);
       setError(response.statusText);
       return;
     }
@@ -75,11 +76,13 @@ export function Chat() {
     const {state, statusMessage, output} = await response.json()
 
     if (state == 'succeeded') {
+      setLoading(false);
       setMessages((oldMessages) => [
         ...oldMessages,
         { message: output.trim(), who: 'bot' } as Message
       ])
     } else if (state == 'failed') {
+      setLoading(false);
       setError(statusMessage);
       return;
     } else if (state == 'running') {
@@ -112,9 +115,8 @@ export function Chat() {
       }),
     })
 
-    setLoading(false);
-
     if (!response.ok) {
+      setLoading(false);
       setError(response.statusText);
       return;
     }
@@ -122,6 +124,7 @@ export function Chat() {
     const {taskId, workspace, error} = await response.json()
 
     if (error) {
+      setLoading(false);
       setError(error)
     } else {
       pollMessage(taskId, workspace)
