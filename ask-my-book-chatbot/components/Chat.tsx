@@ -3,13 +3,13 @@ import { Button } from './Button'
 import { type Message, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
 
-const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3-steamship'
+const COOKIE_NAME = 'ask-my-book-steamship'
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: Message[] = [
   {
     who: 'bot',
-    message: 'Hi! I’m a persistent, multi-user AI assistant. Ask me anything!',
+    message: 'Hi! I just read your book. Ask me a question about it!',
   },
 ]
 
