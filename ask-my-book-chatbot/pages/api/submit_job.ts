@@ -32,31 +32,34 @@ export default async function handler(
     if (!packageHandle) {
       return res.json({ error: "Please set the STEAMSHIP_PACKAGE_HANDLE env variable." })
     }
-
     if (!dbId) {
       return res.json({ error: "Unknown index selected." })
     }
 
+    const workspace = `${packageHandle}-${uniqueUserToken}`;
+
     const pkg = await getSteamshipPackage({
-      workspace: `${packageHandle}-${uniqueUserToken}`,
+      workspace: workspace,
       pkg: packageHandle,
       config: {index_name: dbId} as Map<string, any>
     })
 
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
-    // @ts-ignore
-    const resp = await pkg.invoke('generate', {
+    // Since we use invokeAsync here, the result will be a task that we can poll. This guarantees the Vercel function
+    // can return quickly without having the paid plan.
+    const resp: Task<any> = await pkg.invokeAsync('generate', {
       question: message,
-      // @ts-ignore
       chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
     })
 
-    // The resp object is an Axios response object. The .data field can be binary, JSON, text, etc.
-    // For example, it's just text -- see steamship/api.py for where it's produced and returned.
-    const text = resp.data
+    const taskId = resp.taskId;
 
-    // Return JSON to the web client.
-    return res.json({ text })
+    if (!taskId) {
+      return res.json({ error: "No taskId was returned from Steamship"});
+    } else {
+      return res.json({taskId, workspace});
+    }
+
   } catch (ex) {
     console.log(ex)
     const awaitedEx = (await ex) as any;
