@@ -36,7 +36,7 @@ export default async function handler(
       return res.json({ error: "Unknown index selected." })
     }
 
-    const workspace = `${packageHandle}-${uniqueUserToken}`;
+    const workspace = dbId;
 
     const pkg = await getSteamshipPackage({
       workspace: workspace,
