@@ -9,7 +9,7 @@ const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3-steamship'
 export const initialMessages: Message[] = [
   {
     who: 'bot',
-    message: 'Hi! I read your book, parsed it with LangChain and Steamship. Ask me a question!',
+    message: 'Hi! I’m a persistent, multi-user AI assistant. Ask me anything!',
   },
 ]
 
@@ -44,7 +44,12 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
   </div>
 )
 
-export function Chat() {
+type ChatProps = {
+    dbId: string;
+}
+
+export function Chat(props: ChatProps) {
+  const {dbId} = props
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -59,40 +64,6 @@ export function Chat() {
     }
   }, [cookie, setCookie])
 
-  const pollMessage = async (taskId: string, workspace: string) => {
-    console.log("Polling", taskId, workspace)
-    const response = await fetch('/api/check_job', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({taskId, workspace})
-    })
-
-    if (!response.ok) {
-      setLoading(false);
-      setError(response.statusText);
-      return;
-    }
-
-    const {state, statusMessage, output} = await response.json()
-
-    if (state == 'succeeded') {
-      setLoading(false);
-      setMessages((oldMessages) => [
-        ...oldMessages,
-        { message: output.trim(), who: 'bot' } as Message
-      ])
-    } else if (state == 'failed') {
-      setLoading(false);
-      setError(statusMessage);
-      return;
-    } else if (state == 'running') {
-      setTimeout(async () => {
-        pollMessage(taskId, workspace)
-      }, 300);
-    }
-
-  }
-
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
     setLoading(true)
@@ -104,7 +75,7 @@ export function Chat() {
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10)
 
-    const response = await fetch('/api/submit_job', {
+    const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -112,22 +83,29 @@ export function Chat() {
       body: JSON.stringify({
         messages: last10messages,
         user: cookie[COOKIE_NAME],
+        dbId: dbId,
       }),
     })
 
+    setLoading(false);
+
     if (!response.ok) {
-      setLoading(false);
       setError(response.statusText);
       return;
     }
 
-    const {taskId, workspace, error} = await response.json()
+    const {text, error} = await response.json()
 
     if (error) {
-      setLoading(false);
       setError(error)
-    } else {
-      pollMessage(taskId, workspace)
+    } else if (text) {
+      // strip out white spaces from the bot message
+      const botNewMessage = text.trim()
+
+      setMessages([
+        ...newMessages,
+        { message: botNewMessage, who: 'bot' } as Message,
+      ])
     }
   }
 
