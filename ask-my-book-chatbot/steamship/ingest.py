@@ -5,9 +5,9 @@ from steamship import Steamship
 
 from steamship_langchain.vectorstores import SteamshipVectorStore
 
-index_name = "ask-naval-ravikant"
+index_name = "crisis-protocol"
 client = Steamship(workspace=index_name)
-loader = PagedPDFSplitter("the-almanack-of-naval-ravikant.pdf")
+loader = PagedPDFSplitter("debug.pdf")
 pages = loader.load_and_split()
 doc_index = SteamshipVectorStore.from_texts(client=client,
                                             texts=[page.page_content for page in pages],

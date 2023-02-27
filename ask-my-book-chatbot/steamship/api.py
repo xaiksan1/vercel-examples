@@ -93,7 +93,7 @@ class AskMyBook(PackageService):
 
 
 if __name__ == "__main__":
-    index_name = "ask-naval-ravikant"
+    index_name = "crisis-protocol"
 
     # package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
     # answer = package.generate(
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
 
     client = Steamship(workspace=index_name)
-    pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test123555", config={"index_name": index_name})
+    pkg = client.use(package_handle="ask-my-book-chat-api", instance_handle="test123555", config={"index_name": index_name})
 
-    d = pkg.invoke("/generate", question="What is specific knowledge?", chat_session_id="007")
+    d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")
     print(d)
