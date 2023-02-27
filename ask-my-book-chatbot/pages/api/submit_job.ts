@@ -23,7 +23,6 @@ export default async function handler(
   try {
     // Fetch a stub to the Steamship-hosted backend.
     // Use a different workspace name per-user to provide data isolation.
-    const uniqueUserToken = "user-1234";
     const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
 
     if (!process.env.STEAMSHIP_API_KEY) {
@@ -49,7 +48,7 @@ export default async function handler(
     // can return quickly without having the paid plan.
     const resp: Task<any> = await pkg.invokeAsync('generate', {
       question: message,
-      chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
+      // chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
     })
 
     const taskId = resp.taskId;

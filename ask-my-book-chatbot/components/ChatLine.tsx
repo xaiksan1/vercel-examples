@@ -1,12 +1,13 @@
 import clsx from 'clsx'
 import Balancer from 'react-wrap-balancer'
+import Source from "../components/Source";
 
-// wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 const BalancerWrapper = (props: any) => <Balancer {...props} />
 
 export type Message = {
   who: 'bot' | 'user' | undefined
   message?: string
+  sources?: any
 }
 
 // loading placeholder animation for the chat line
@@ -40,11 +41,14 @@ const convertNewLines = (text: string) =>
     </span>
   ))
 
-export function ChatLine({ who = 'bot', message }: Message) {
+export function ChatLine({ who = 'bot', message, sources }: Message) {
   if (!message) {
     return null
   }
   const formatteMessage = convertNewLines(message)
+
+  console.log("sources")
+  console.log(sources)
 
   return (
     <div
@@ -68,7 +72,16 @@ export function ChatLine({ who = 'bot', message }: Message) {
                 )}
               >
                 {formatteMessage}
+                    
+               
               </p>
+              {sources && sources.map((source_doc, index) => {
+                              const {page_content, metadata} = source_doc
+                              const {page, source} = metadata
+                              return (
+                                   <Source key={index} index={index+1} page={page} page_content={page_content} source={source} />
+                              )
+                        })}
             </div>
           </div>
         </div>

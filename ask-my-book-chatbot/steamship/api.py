@@ -1,4 +1,4 @@
-from typing import Type, Optional
+from typing import Type, Optional, Dict, Any
 
 from langchain import PromptTemplate
 from langchain.chains import ChatVectorDBChain
@@ -9,6 +9,10 @@ from steamship.invocable import Config
 from steamship.invocable import PackageService, post
 from steamship_langchain import OpenAI
 from steamship_langchain.vectorstores import SteamshipVectorStore
+
+from chat_history import ChatHistory
+
+DEBUG = False
 
 
 class AskMyBook(PackageService):
@@ -64,30 +68,49 @@ class AskMyBook(PackageService):
         doc_chain = load_qa_chain(OpenAI(client=self.client, temperature=0, verbose=True),
                                   chain_type="stuff",
                                   prompt=qa_prompt,
-                                  verbose=False)
+                                  verbose=DEBUG)
         question_chain = LLMChain(
-            llm=OpenAI(client=self.client, temperature=0, verbose=False),
+            llm=OpenAI(client=self.client, temperature=0, verbose=DEBUG),
             prompt=condense_question_prompt,
         )
         return ChatVectorDBChain(
             vectorstore=doc_index,
             combine_docs_chain=doc_chain,
             question_generator=question_chain,
+            return_source_documents=True
         )
 
     @post("/generate")
-    def generate(self, question: str, chat_session_id: Optional[str] = None) -> str:
-        """Returns an answer in response to a question."""
-        result = self.qa_chain(
-            {"question": question, "chat_history": []}
-        )
+    def generate(self, question: str, chat_session_id: Optional[str] = None) -> Dict[str, Any]:
+        chat_history = ChatHistory(self.client, chat_session_id)
 
-        return result["answer"].strip()
+        result = self.qa_chain(
+            {"question": question, "chat_history": chat_history.load()}
+        )
+        chat_history.append(question, result["answer"])
+
+        return {"answer": result["answer"].strip(), "sources": result["source_documents"]}
 
 
 if __name__ == "__main__":
-    package = AskMyBook(client=Steamship(), config={"index_name": "ask-naval"})
-    answer = package.generate(
-        question="What is specific knowledge?",
-    )
-    print(answer)
+    index_name = "ask-naval-ravikant"
+
+    # package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
+    # answer = package.generate(
+    #     question="What is specific knowledge?",
+    #     chat_session_id="007"
+    # )
+    # print(answer)
+    #
+    # answer = package.generate(
+    #     question="Could you explain this to a 5 year old?",
+    #     chat_session_id="007"
+    # )
+    # print(answer)
+
+
+    client = Steamship(workspace=index_name)
+    pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test123555", config={"index_name": index_name})
+
+    d = pkg.invoke("/generate", question="What is specific knowledge?", chat_session_id="007")
+    print(d)

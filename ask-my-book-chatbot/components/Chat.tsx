@@ -82,9 +82,14 @@ export function Chat(props: ChatProps) {
 
     if (state == 'succeeded') {
       setLoading(false);
+      const {answer, sources} = JSON.parse(output)
+
+      console.log("succeeded")
+      console.log(output)
+
       setMessages((oldMessages) => [
         ...oldMessages,
-        { message: output.trim(), who: 'bot' } as Message
+        { message: answer.trim(), who: 'bot', sources: sources } as Message
       ])
     } else if (state == 'failed') {
       setLoading(false);
@@ -138,8 +143,8 @@ export function Chat(props: ChatProps) {
 
   return (
     <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
-      {messages.map(({ message, who }, index) => (
-        <ChatLine key={index} who={who} message={message} />
+      {messages.map(({ message, who, sources }, index) => (
+        <ChatLine key={index} who={who} message={message} sources={sources} />
       ))}
 
       {loading && <LoadingChatLine />}
