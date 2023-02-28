@@ -48,7 +48,7 @@ export default async function handler(
     // can return quickly without having the paid plan.
     const resp: Task<any> = await pkg.invokeAsync('generate', {
       question: message,
-      // chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
+      chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
     })
 
     const taskId = resp.taskId;

@@ -1,11 +1,12 @@
 import { Layout, Text, Page } from '@vercel/examples-ui'
 import { Chat } from '../components/Chat'
 import { useRouter } from 'next/router'
+import Documents from "../components/Documents";
 
 function Home() {
   const router = useRouter()
   let {dbId} = router.query
-  dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
+  dbId = dbId as string || process.env.NEXT_PUBLIC_INDEX_NAME as string;
 
   const errorMessage = (
         <div className="rounded-md bg-red-50 p-4">
@@ -18,12 +19,12 @@ function Home() {
           </div>
           )
 
-
   return (
     <Page className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
-        <Text variant="h1">Chat with your book</Text>
-        <Text variant="h2">Get twice the learnings 🧠</Text>
+        <Text variant="h1">Chat with your books 🧠</Text>
+        <Documents dbId={dbId}/>
+      
 
       </section>
 

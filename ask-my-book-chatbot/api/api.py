@@ -1,4 +1,5 @@
-from typing import Type, Optional, Dict, Any
+import json
+from typing import Type, Optional, Dict, Any, List
 
 from langchain import PromptTemplate
 from langchain.chains import ChatVectorDBChain
@@ -6,7 +7,8 @@ from langchain.chains.llm import LLMChain
 from langchain.chains.question_answering import load_qa_chain
 from steamship import Steamship
 from steamship.invocable import Config
-from steamship.invocable import PackageService, post
+from steamship.invocable import PackageService, post, get
+from steamship.utils.url import Verb
 from steamship_langchain import OpenAI
 from steamship_langchain.vectorstores import SteamshipVectorStore
 
@@ -18,6 +20,7 @@ DEBUG = False
 class AskMyBook(PackageService):
     class AskMyBookConfig(Config):
         index_name: str
+        default_chat_session_id: Optional[str] = "default"
 
     config: AskMyBookConfig
 
@@ -33,11 +36,14 @@ class AskMyBook(PackageService):
     def config_cls(cls) -> Type[Config]:
         return cls.AskMyBookConfig
 
+    def _get_index(self):
+        return SteamshipVectorStore(client=self.client,
+                                    index_name=self.config.index_name,
+                                    embedding="text-embedding-ada-002"
+                                    )
+
     def _get_chain(self):
-        doc_index = SteamshipVectorStore(client=self.client,
-                                         index_name=self.config.index_name,
-                                         embedding="text-embedding-ada-002"
-                                         )
+        doc_index = self._get_index()
         condense_question_prompt_template = """Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
 
         Chat History:
@@ -80,8 +86,14 @@ class AskMyBook(PackageService):
             return_source_documents=True
         )
 
+    @get("/books")
+    def get_indexed_books(self) -> List[str]:
+        return list(
+            set(json.loads(item.metadata)["source"] for item in self._get_index().index.index.list_items().items))
+
     @post("/generate")
     def generate(self, question: str, chat_session_id: Optional[str] = None) -> Dict[str, Any]:
+        chat_session_id = chat_session_id or self.config.default_chat_session_id
         chat_history = ChatHistory(self.client, chat_session_id)
 
         result = self.qa_chain(
@@ -95,22 +107,28 @@ class AskMyBook(PackageService):
 if __name__ == "__main__":
     index_name = "crisis-protocol"
 
-    # package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
-    # answer = package.generate(
-    #     question="What is specific knowledge?",
-    #     chat_session_id="007"
-    # )
-    # print(answer)
+    package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
+    # # answer = package.generate(
+    # #     question="What is specific knowledge?",
+    # #     chat_session_id="007"
+    # # )
+    # # print(answer)
+    # #
+    # # answer = package.generate(
+    # #     question="Could you explain this to a 5 year old?",
+    # #     chat_session_id="007"
+    # # )
+    # # print(answer)
     #
-    # answer = package.generate(
-    #     question="Could you explain this to a 5 year old?",
-    #     chat_session_id="007"
-    # )
-    # print(answer)
-
+    # books = package.get_indexed_books()
+    # print(books)
 
     client = Steamship(workspace=index_name)
-    pkg = client.use(package_handle="ask-my-book-chat-api", instance_handle="test123555", config={"index_name": index_name})
-
+    pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test1235ddddd55",
+                     config={"index_name": index_name})
+    #
     d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")
     print(d)
+
+    books = pkg.invoke("/books", verb=Verb.GET)
+    print(books)

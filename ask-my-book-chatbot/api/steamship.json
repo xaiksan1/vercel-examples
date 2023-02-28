@@ -1,7 +1,7 @@
 {
 	"type": "package",
-	"handle": "ask-my-book-chat-api",
-	"version": "0.0.5",
+	"handle": "ask-my-book-chat-api-test2",
+	"version": "0.0.6",
 	"description": null,
 	"author": "Enias",
 	"entrypoint": "Unused",
@@ -18,6 +18,11 @@
 			"type": "string",
 			"description": null,
 			"default": null
+		},
+		"default_chat_session_id": {
+			"type": "string",
+			"description": null,
+			"default": "default"
 		}
 	},
 	"steamshipRegistry": {

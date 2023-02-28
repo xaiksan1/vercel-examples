@@ -33,8 +33,8 @@ Think of it as a host for Vercel-style API functions, but with a managed, statef
 Deploy your Steamship stack from this project's root folder with:
 
 ```bash
-pip install steamship
-cd steamship
+pip install api
+cd api
 ship deploy
 ```
 
