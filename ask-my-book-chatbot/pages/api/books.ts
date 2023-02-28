@@ -12,8 +12,12 @@ export default async function handler(
     // Fetch a stub to the Steamship-hosted backend.
     // Use a different workspace name per-user to provide data isolation.
     const packageHandle = process.env.STEAMSHIP_PACKAGE_HANDLE as string;
+    const defaultChatSessionId = process.env.DEFAULT_CHAT_SESSION_ID as string;
+
     var {dbId} = req.body as string;
+    console.log("first dbid", dbId)
     dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
+    console.log("dbid", dbId)
 
     if (!process.env.STEAMSHIP_API_KEY) {
       return res.json({ error: "Please set the STEAMSHIP_API_KEY env variable." })
@@ -25,7 +29,7 @@ export default async function handler(
     const pkg = await getSteamshipPackage({
       workspace: dbId,
       pkg: packageHandle,
-      config: {index_name: dbId, default_chat_session_id: "test"} as Map<string, any>
+      config: {index_name: dbId, default_chat_session_id: defaultChatSessionId} as Map<string, any>
     })
 
 

@@ -5,8 +5,8 @@ from langchain.document_loaders import PagedPDFSplitter
 from steamship import Steamship
 from steamship_langchain.vectorstores import SteamshipVectorStore
 
-index_name = "ask-naval-ravikant"
-book_name = "the-almanack-of-naval-ravikant.pdf"
+index_name = "debug-2"
+book_name = "uploads/debug.pdf"
 reset = True
 
 client = Steamship(workspace=index_name)
@@ -17,7 +17,6 @@ vs = SteamshipVectorStore(client=client, index_name=index_name, embedding="text-
 
 books = set(json.loads(item.metadata)["source"] for item in vs.index.index.list_items().items)
 if book_name in books:
-    print("book already indexed")
     if reset:
         vs.index.reset()
 

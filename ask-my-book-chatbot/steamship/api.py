@@ -99,20 +99,23 @@ class AskMyBook(PackageService):
         result = self.qa_chain(
             {"question": question, "chat_history": chat_history.load()}
         )
+        if len(result["source_documents"]) == 0:
+            return {"answer": "No sources found to answer your question", "sources": result["source_documents"]}
+
         chat_history.append(question, result["answer"])
 
         return {"answer": result["answer"].strip(), "sources": result["source_documents"]}
 
 
 if __name__ == "__main__":
-    index_name = "crisis-protocol"
+    index_name = "debug"
 
     package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
-    # # answer = package.generate(
-    # #     question="What is specific knowledge?",
-    # #     chat_session_id="007"
-    # # )
-    # # print(answer)
+    answer = package.generate(
+        question="What is specific knowledge?",
+        chat_session_id="test123"
+    )
+    print(answer)
     # #
     # # answer = package.generate(
     # #     question="Could you explain this to a 5 year old?",
@@ -123,12 +126,12 @@ if __name__ == "__main__":
     # books = package.get_indexed_books()
     # print(books)
 
-    client = Steamship(workspace=index_name)
-    pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test1235ddddd55",
-                     config={"index_name": index_name})
+    # client = Steamship(workspace=index_name)
+    # pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test1235ddddd55",
+    #                  config={"index_name": index_name})
+    # #
+    # d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")
+    # print(d)
     #
-    d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")
-    print(d)
-
-    books = pkg.invoke("/books", verb=Verb.GET)
-    print(books)
+    # books = pkg.invoke("/books", verb=Verb.GET)
+    # print(books)

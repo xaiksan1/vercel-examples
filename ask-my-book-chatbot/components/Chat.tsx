@@ -83,7 +83,7 @@ export function Chat(props: ChatProps) {
     if (state == 'succeeded') {
       setLoading(false);
       const {answer, sources} = JSON.parse(output)
-
+      console.log("sources", sources)
       setMessages((oldMessages) => [
         ...oldMessages,
         { message: answer.trim(), who: 'bot', sources: sources } as Message

@@ -4,8 +4,9 @@ import { useRouter } from 'next/router'
 import Documents from "../components/Documents";
 
 function Home() {
-  const router = useRouter()
-  let {dbId} = router.query
+  const {query, isReady} = useRouter()
+  let {dbId} = query
+  console.log("index", dbId, isReady)
   dbId = dbId as string || process.env.NEXT_PUBLIC_INDEX_NAME as string;
 
   const errorMessage = (
@@ -23,7 +24,7 @@ function Home() {
     <Page className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
         <Text variant="h1">Chat with your books 🧠</Text>
-        <Documents dbId={dbId}/>
+        {isReady && <Documents dbId={dbId}/> }
       
 
       </section>

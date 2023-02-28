@@ -18,15 +18,11 @@ export default function Documents({ dbId }: { dbId: string }) {
     });
 
     const {books} = await response.json();
-    console.log("received books")
-    console.log(books)
     setBooks(books)
-    console.log(books)
 
   };
 
-  if (books.length === 0) {
-    console.log("going to fetch books")
+  if (books.length === 0 && dbId) {
     fetchBooks()
   }
 
