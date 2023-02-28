@@ -25,7 +25,7 @@ export default async function handler(
     const pkg = await getSteamshipPackage({
       workspace: dbId,
       pkg: packageHandle,
-      config: {index_name: dbId} as Map<string, any>
+      config: {index_name: dbId, default_chat_session_id: "test"} as Map<string, any>
     })
 
 

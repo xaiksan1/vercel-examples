@@ -40,7 +40,7 @@ export default async function handler(
     const pkg = await getSteamshipPackage({
       workspace: workspace,
       pkg: packageHandle,
-      config: {index_name: dbId} as Map<string, any>
+      config: {index_name: dbId, default_chat_session_id: "test"} as Map<string, any>
     })
 
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
