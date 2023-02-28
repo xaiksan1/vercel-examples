@@ -100,7 +100,7 @@ class AskMyBook(PackageService):
             {"question": question, "chat_history": chat_history.load()}
         )
         if len(result["source_documents"]) == 0:
-            return {"answer": "No sources found to answer your question", "sources": result["source_documents"]}
+            return {"answer": "No sources found to answer your question. Please try another question.", "sources": result["source_documents"]}
 
         chat_history.append(question, result["answer"])
 

@@ -1,9 +1,9 @@
-import { ListGroup } from "flowbite-react";
+import { ListGroup, Alert} from "flowbite-react";
 import { useState } from "react";
 
 export default function Documents({ dbId }: { dbId: string }) {
 
-  const [books, setBooks] = useState<String[]>([]);
+  const [books, setBooks] = useState<String[]|null>(null);
 
   const fetchBooks = async () => {
     const response = await fetch('/api/books', {
@@ -22,13 +22,13 @@ export default function Documents({ dbId }: { dbId: string }) {
 
   };
 
-  if (books.length === 0 && dbId) {
+  if (!books) {
     fetchBooks()
   }
 
   return (
     <div>
-    {books.length !== 0 && (<div><p>Books read: </p>
+    {(books && books.length !== 0) && (<div><p>Books read: </p>
     <ListGroup>
 
     {books && books.map((book) => (
@@ -44,6 +44,26 @@ export default function Documents({ dbId }: { dbId: string }) {
   </ListGroup></div>
     )
 }
+
+{(books && books.length === 0) && (
+
+<Alert
+color="failure"
+>
+<span>
+  <span className="font-medium">
+    Index incomplete!
+  </span>
+  {' '}This index is not connected to a book. Please try to upload your book again <a href="https://www.steamship.com/build/ask-my-book-site" className="font-semibold text-gray-900 underline dark:text-white decoration-sky-500">here</a>.
+  <br/>
+  <br/>
+
+  If this issue persists, please ping us on <a href="https://steamship.com/discord" className="font-semibold text-gray-900 underline dark:text-white decoration-sky-500">Discord</a>. We're happy to help. 
+</span>
+</Alert>
+
+    
+)}
   </div>
   );
 }
