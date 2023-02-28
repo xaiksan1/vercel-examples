@@ -58,7 +58,7 @@ color="failure"
   <br/>
   <br/>
 
-  If this issue persists, please ping us on <a href="https://steamship.com/discord" className="font-semibold text-gray-900 underline dark:text-white decoration-sky-500">Discord</a>. We're happy to help. 
+  If this issue persists, please ping us on <a href="https://steamship.com/discord" className="font-semibold text-gray-900 underline dark:text-white decoration-sky-500">Discord</a>. We&apos;re happy to he. 
 </span>
 </Alert>
 
