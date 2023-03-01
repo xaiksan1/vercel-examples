@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './Button'
 import { type Message, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
-import { HiOutlineArrowRight, HiOutlineRefresh } from 'react-icons/hi';
+import { HiOutlineArrowRight, HiOutlineRefresh, HiOutlinePlus } from 'react-icons/hi';
 
 const COOKIE_NAME = 'ask-my-book-steamship'
 
@@ -174,7 +174,6 @@ export function Chat(props: ChatProps) {
 
   return (
     <div>
-      <div onClick={resetChatConversation} className='text-blue-600 font-semibold hover:underline hover:cursor-pointer'>Reset conversation</div>
     <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
       {messages.map(({ message, who, sources }, index) => (
         <ChatLine key={index} who={who} message={message} sources={sources} />
@@ -190,6 +189,11 @@ export function Chat(props: ChatProps) {
  onClick={regenerateAnswer} gradientDuoTone="greenToBlue">
   <div className="flex flex-row items-center">
           <HiOutlineRefresh className="mr-2 h-5 w-5" /> Regenerate response
+          </div>
+    </Button><Button  disabled={loading}   outline={true}
+ onClick={resetChatConversation} gradientDuoTone="greenToBlue" className="ml-2">
+  <div className="flex flex-row items-center">
+          <HiOutlinePlus className="mr-2 h-5 w-5" /> New chat
           </div>
     </Button>
         </span>
