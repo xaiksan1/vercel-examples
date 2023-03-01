@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from './Button'
 import { type Message, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
+import { HiOutlineArrowRight, HiOutlineRefresh } from 'react-icons/hi';
 
 const COOKIE_NAME = 'ask-my-book-steamship'
 
@@ -33,13 +34,14 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
     />
     <Button
       type="submit"
-      className="ml-4 flex-none"
+      className="ml-2 flex-none"
       onClick={() => {
         sendMessage(input)
         setInput('')
       }}
     >
-      Say
+    <HiOutlineArrowRight className="h-5 w-5" />
+
     </Button>
   </div>
 )
@@ -56,11 +58,14 @@ export function Chat(props: ChatProps) {
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
   const [error, setError] = useState<String | undefined>(undefined);
 
+
+  
+
   useEffect(() => {
+    console.log("cookie", cookie[COOKIE_NAME])
     if (!cookie[COOKIE_NAME]) {
       // generate a semi random short id
-      const randomId = Math.random().toString(36).substring(7)
-      setCookie(COOKIE_NAME, randomId)
+      resetChatSessionId()
     }
   }, [cookie, setCookie])
 
@@ -99,16 +104,45 @@ export function Chat(props: ChatProps) {
     }
   }
 
-  // send message to API /api/chat endpoint
-  const sendMessage = async (message: string) => {
+
+  const resetChatSessionId = () => {
+    console.log("resetting chat session id")
+    const chatSessionId = Math.random().toString(36).substring(7)
+    setCookie(COOKIE_NAME, chatSessionId)
+    console.log(chatSessionId, cookie[COOKIE_NAME])
+  }
+
+  const resetChatConversation = () => {
+    resetChatSessionId()
+    setMessages(initialMessages)
+  }
+
+  const removeOldQuestionAndAnswer = () => {
+
+    
+  }
+
+  const regenerateAnswer = () => {
+    let {who: who_first} = messages[messages.length - 1]
+    console.log(who_first)
+    let offset = 0
+    if (who_first === "bot") {
+      offset = 1
+    }
+    const {message, who} = messages[messages.length - 1 - offset]
+    console.log("sending", message, who)
+    sendMessage(message as string, messages.slice(0,messages.length-1 - offset))
+  }
+
+
+  const sendMessage = async (message: string, message_history?: Message[]) => {
     setLoading(true)
     setError(undefined);
     const newMessages = [
-      ...messages,
+      ...message_history || messages,
       { message: message, who: 'user' } as Message,
     ]
     setMessages(newMessages)
-    const last10messages = newMessages.slice(-10)
 
     const response = await fetch('/api/submit_job', {
       method: 'POST',
@@ -116,8 +150,8 @@ export function Chat(props: ChatProps) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: last10messages,
-        user: cookie[COOKIE_NAME],
+        message: message, 
+        chatSessionId: cookie[COOKIE_NAME],
         dbId: dbId,
       }),
       })
@@ -139,6 +173,8 @@ export function Chat(props: ChatProps) {
   }
 
   return (
+    <div>
+      <div onClick={resetChatConversation} className='text-blue-600 font-semibold hover:underline hover:cursor-pointer'>Reset conversation</div>
     <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
       {messages.map(({ message, who, sources }, index) => (
         <ChatLine key={index} who={who} message={message} sources={sources} />
@@ -146,11 +182,20 @@ export function Chat(props: ChatProps) {
 
       {loading && <LoadingChatLine />}
 
-      {messages.length < 2 && (
+      {messages.length < 2 ? (
         <span className="mx-auto flex flex-grow text-gray-600 clear-both">
           Type a message to start the conversation
+        </span>) : (<span className="justify-center content-center	mx-auto flex flex-grow clear-both">
+        <Button  disabled={loading}   outline={true}
+ onClick={regenerateAnswer} gradientDuoTone="greenToBlue">
+  <div className="flex flex-row items-center">
+          <HiOutlineRefresh className="mr-2 h-5 w-5" /> Regenerate response
+          </div>
+    </Button>
         </span>
       )}
+
+      
       <InputMessage
         input={input}
         setInput={setInput}
@@ -167,6 +212,7 @@ export function Chat(props: ChatProps) {
             </div>
           </div>
       )}
+    </div>
     </div>
   )
 }

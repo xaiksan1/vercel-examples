@@ -11,7 +11,7 @@ export default function Source({ index, page, page_content, source }: { index?: 
   return (
      <div key={index} >
     <p className="text-left pt-2  text-blue-600 hover:underline" onClick={()=>setVisible(true)}>
-      🧠 Source: {source} - Page {page}
+      🧠 Source: {index} - {source}
     </p>
     <Modal
       show={visible}

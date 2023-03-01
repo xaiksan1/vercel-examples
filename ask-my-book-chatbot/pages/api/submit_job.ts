@@ -6,19 +6,16 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { messages } = req.body as any;
-  var {dbId} = req.body as string;
+  const { message } = req.body as any;
+  let {dbId, chatSessionId} = req.body;
+  console.log("chatSessionId", chatSessionId)
   dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
   const defaultChatSessionId = process.env.DEFAULT_CHAT_SESSION_ID as string;
-
-  if (!messages) {
-    return res.json({ error: "Please enter a message." })
-  }
-
-  const {message, who} = messages[messages.length - 1]
+  chatSessionId = chatSessionId || defaultChatSessionId;
+  console.log("chatSessionId", chatSessionId)
 
   if (!message) {
-    return res.json({ error: "No last message found." })
+    return res.json({ error: "Please enter a message." })
   }
 
   try {
@@ -38,7 +35,6 @@ export default async function handler(
 
     const workspace = dbId;
 
-    console.log("defaultChatSessionId", defaultChatSessionId)
     const pkg = await getSteamshipPackage({
       workspace: workspace,
       pkg: packageHandle,
@@ -50,7 +46,7 @@ export default async function handler(
     // can return quickly without having the paid plan.
     const resp: Task<any> = await pkg.invokeAsync('generate', {
       question: message,
-      chat_session_id: 'default' // Note: the bundled chat package provides different chat "rooms" with a workspace.
+      chat_session_id: chatSessionId // Note: the bundled chat package provides different chat "rooms" with a workspace.
     })
 
     const taskId = resp.taskId;
