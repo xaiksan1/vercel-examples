@@ -1,18 +1,20 @@
 import json
 from typing import Type, Optional, Dict, Any, List
 
+import langchain
 from langchain import PromptTemplate
 from langchain.chains import ChatVectorDBChain
 from langchain.chains.llm import LLMChain
 from langchain.chains.question_answering import load_qa_chain
-from steamship import Steamship
+from steamship import Steamship, File
 from steamship.invocable import Config
 from steamship.invocable import PackageService, post, get
-from steamship.utils.url import Verb
 from steamship_langchain import OpenAI
 from steamship_langchain.vectorstores import SteamshipVectorStore
 
 from chat_history import ChatHistory
+
+langchain.llm_cache = None
 
 DEBUG = False
 
@@ -71,7 +73,7 @@ class AskMyBook(PackageService):
             template=qa_prompt_template, input_variables=["context", "question"]
         )
 
-        doc_chain = load_qa_chain(OpenAI(client=self.client, temperature=0, verbose=True),
+        doc_chain = load_qa_chain(OpenAI(client=self.client, temperature=0, verbose=DEBUG),
                                   chain_type="stuff",
                                   prompt=qa_prompt,
                                   verbose=DEBUG)
@@ -91,6 +93,14 @@ class AskMyBook(PackageService):
         return list(
             set(json.loads(item.metadata)["source"] for item in self._get_index().index.index.list_items().items))
 
+    @get("/author")
+    def get_author_info(self) -> Dict[str, str]:
+        try:
+            f = File.query(self.client, tag_filter_query=f'kind "AuthorTag" and name "{self.config.index_name}"')
+            return f.files[0].tags[0].value
+        except Exception as e:
+            return {}
+
     @post("/generate")
     def generate(self, question: str, chat_session_id: Optional[str] = None) -> Dict[str, Any]:
         chat_session_id = chat_session_id or self.config.default_chat_session_id
@@ -100,7 +110,8 @@ class AskMyBook(PackageService):
             {"question": question, "chat_history": chat_history.load()}
         )
         if len(result["source_documents"]) == 0:
-            return {"answer": "No sources found to answer your question. Please try another question.", "sources": result["source_documents"]}
+            return {"answer": "No sources found to answer your question. Please try another question.",
+                    "sources": result["source_documents"]}
 
         chat_history.append(question, result["answer"])
 
@@ -108,9 +119,15 @@ class AskMyBook(PackageService):
 
 
 if __name__ == "__main__":
-    index_name = "debug"
+    index_name = "naval-ravikant"
 
     package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
+    answer = package.generate(
+        question="What is specific knowledge?",
+        chat_session_id="test123"
+    )
+    print(answer)
+
     answer = package.generate(
         question="What is specific knowledge?",
         chat_session_id="test123"
@@ -127,7 +144,7 @@ if __name__ == "__main__":
     # print(books)
 
     # client = Steamship(workspace=index_name)
-    # pkg = client.use(package_handle="ask-my-book-chat-api-test", instance_handle="test1235ddddd55",
+    # pkg = client.use(package_handle="ask-my-book-chat-steamship-test", instance_handle="test1235ddddd55",
     #                  config={"index_name": index_name})
     # #
     # d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")

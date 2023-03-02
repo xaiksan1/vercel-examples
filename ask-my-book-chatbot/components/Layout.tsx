@@ -30,7 +30,7 @@ const Layout: FC<LayoutProps> = ({
       <div className="px-8 bg-accents-0">{children}</div>
 
       <footer className="py-10 w-full mt-auto border-t flex items-center justify-center bg-accents-1 z-20">
-        <span className="text-primary">Created by</span>
+        <span className="text-primary">Created with</span>
         <a
           href="https://steamship.com"
           aria-label="Steamship.com Link"
@@ -39,15 +39,15 @@ const Layout: FC<LayoutProps> = ({
           className="text-black "
         >
           <Logo
-            className="inline-block h-6 ml-3 text-primary"
-          /> Steamship
+            className="inline-block h-6 ml-2 text-primary"
+          /> <span className='text-blue-800'>Steamship</span>
         </a>. Based on the
         <a
-          href="https://vercel.com/templates/next.js/ai-gpt3-chatbot"
+          href="https://github.com/steamship-core/vercel-examples/tree/main/ask-my-book-chatbot"
           target="_blank"
           rel="noreferrer"
-          className="text-black ml-1 mr-1"
-        > the ai-gpt3-chatbot
+          className="text-black text-blue-600 ml-1 mr-1"
+        > the ask-my-book-chatbot
         </a> template.
       </footer>
     </div>

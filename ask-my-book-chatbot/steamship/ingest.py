@@ -5,7 +5,7 @@ from langchain.document_loaders import PagedPDFSplitter
 from steamship import Steamship
 from steamship_langchain.vectorstores import SteamshipVectorStore
 
-INDEX_NAME = "your-index-name"
+INDEX_NAME = "ask-my-books"
 
 BOOKS = [
     "uploads/the-almanack-of-naval-ravikant.pdf",

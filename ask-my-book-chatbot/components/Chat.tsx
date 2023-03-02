@@ -3,6 +3,8 @@ import { Button } from './Button'
 import { type Message, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
 import { HiOutlineArrowRight, HiOutlineRefresh, HiOutlinePlus } from 'react-icons/hi';
+import LoadingDots from "./LoadingDots";
+import { AuthorDetails } from '../pages';
 
 const COOKIE_NAME = 'ask-my-book-steamship'
 
@@ -14,7 +16,7 @@ export const initialMessages: Message[] = [
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage }: any) => (
+const InputMessage = ({ input, setInput, sendMessage, loading }: any) => (
   <div className="mt-6 flex clear-both">
     <input
       type="text"
@@ -32,26 +34,40 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
         setInput(e.target.value)
       }}
     />
-    <Button
-      type="submit"
-      className="ml-2 flex-none"
-      onClick={() => {
-        sendMessage(input)
-        setInput('')
-      }}
-    >
-    <HiOutlineArrowRight className="h-5 w-5" />
 
-    </Button>
+    {!loading && (<Button
+        type="submit"
+        gradientDuoTone="greenToBlue"
+        className="ml-2 flex-none"
+        onClick={(e) => {
+          sendMessage(input)
+          setInput('')
+        }}
+      >
+      <HiOutlineArrowRight className="h-5 w-5" />
+      </Button>
+      )}
+
+      {loading && (
+                  <Button
+                  gradientDuoTone="greenToBlue"
+                  className="ml-2 h-20"
+                  disabled
+                  >
+                    <LoadingDots color="white" style="large" />
+                  </Button>
+                )}
   </div>
 )
 
 type ChatProps = {
     dbId: string;
+    authorDetails?: AuthorDetails;
 }
 
 export function Chat(props: ChatProps) {
-  const {dbId} = props
+  const {dbId, authorDetails} = props
+  
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -88,7 +104,6 @@ export function Chat(props: ChatProps) {
     if (state == 'succeeded') {
       setLoading(false);
       const {answer, sources} = JSON.parse(output)
-      console.log("sources", sources)
       setMessages((oldMessages) => [
         ...oldMessages,
         { message: answer.trim(), who: 'bot', sources: sources } as Message
@@ -106,10 +121,8 @@ export function Chat(props: ChatProps) {
 
 
   const resetChatSessionId = () => {
-    console.log("resetting chat session id")
     const chatSessionId = Math.random().toString(36).substring(7)
     setCookie(COOKIE_NAME, chatSessionId)
-    console.log(chatSessionId, cookie[COOKIE_NAME])
   }
 
   const resetChatConversation = () => {
@@ -124,7 +137,7 @@ export function Chat(props: ChatProps) {
 
   const regenerateAnswer = () => {
     let {who: who_first} = messages[messages.length - 1]
-    console.log(who_first)
+    (who_first)
     let offset = 0
     if (who_first === "bot") {
       offset = 1
@@ -176,7 +189,7 @@ export function Chat(props: ChatProps) {
     <div>
     <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
       {messages.map(({ message, who, sources }, index) => (
-        <ChatLine key={index} who={who} message={message} sources={sources} />
+        <ChatLine key={index} who={who} message={message} sources={sources} authorDetails={authorDetails} />
       ))}
 
       {loading && <LoadingChatLine />}
@@ -204,6 +217,7 @@ export function Chat(props: ChatProps) {
         input={input}
         setInput={setInput}
         sendMessage={sendMessage}
+        loading={loading}
       />
 
       { error && (

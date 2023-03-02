@@ -8,11 +8,9 @@ export default async function handler(
 ) {
   const { message } = req.body as any;
   let {dbId, chatSessionId} = req.body;
-  console.log("chatSessionId", chatSessionId)
   dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
   const defaultChatSessionId = process.env.DEFAULT_CHAT_SESSION_ID as string;
   chatSessionId = chatSessionId || defaultChatSessionId;
-  console.log("chatSessionId", chatSessionId)
 
   if (!message) {
     return res.json({ error: "Please enter a message." })
@@ -40,7 +38,6 @@ export default async function handler(
       pkg: packageHandle,
       config: {index_name: dbId, default_chat_session_id: defaultChatSessionId} as Map<string, any>
     })
-    console.log(pkg)
     // Invoke a method on the package defined in steamship/api.py. Full syntax: pkg.invoke("method", {args}, "POST" | "GET")
     // Since we use invokeAsync here, the result will be a task that we can poll. This guarantees the Vercel function
     // can return quickly without having the paid plan.

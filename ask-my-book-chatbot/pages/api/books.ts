@@ -15,9 +15,8 @@ export default async function handler(
     const defaultChatSessionId = process.env.DEFAULT_CHAT_SESSION_ID as string;
 
     var {dbId} = req.body as string;
-    console.log("first dbid", dbId)
+    ("first dbid", dbId)
     dbId = dbId || process.env.NEXT_PUBLIC_INDEX_NAME as string;
-    console.log("dbid", dbId)
 
     if (!process.env.STEAMSHIP_API_KEY) {
       return res.json({ error: "Please set the STEAMSHIP_API_KEY env variable." })
