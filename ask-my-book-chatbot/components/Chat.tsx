@@ -130,14 +130,8 @@ export function Chat(props: ChatProps) {
     setMessages(initialMessages)
   }
 
-  const removeOldQuestionAndAnswer = () => {
-
-    
-  }
-
   const regenerateAnswer = () => {
     let {who: who_first} = messages[messages.length - 1]
-    (who_first)
     let offset = 0
     if (who_first === "bot") {
       offset = 1
