@@ -62,7 +62,7 @@ export function ChatLine({ who = 'bot', message, sources, authorDetails }: Messa
             
 
 {who == 'bot' && <div className="flex-shrink-0" hidden={authorDetails === undefined}>
-    <Image className="w-10 h-10 rounded-full" src={authorDetails?.authorImageUrl || ""} alt=""/>
+    <Image className="rounded-full" src ={authorDetails?.authorImageUrl || ""} alt="" width="40" height="40"/>
     <span className="top-0 left-7 absolute  w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>
 </div>
 }
