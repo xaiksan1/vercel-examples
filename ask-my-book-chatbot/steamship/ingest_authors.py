@@ -34,15 +34,15 @@ for folder in Path("uploads/authors").iterdir():
     # connect to the workspace
     client = Steamship(workspace=index_name)
 
-    add_author_info(client=client, index_name=index_name, author_info={
-        "authorName": author_name,
-        **metadata
-    })
+    # add_author_info(client=client, index_name=index_name, author_info={
+    #     "authorName": author_name,
+    #     **metadata
+    # })
 
     doc_index = SteamshipVectorStore(client=client,
                                      index_name=index_name,
                                      embedding="text-embedding-ada-002")
-    doc_index.index.reset()
+    # doc_index.index.reset()
 
     for book in folder.iterdir():
         if book.suffix == ".pdf":
