@@ -59,9 +59,9 @@ cp .env.example .env.local
 Then:
 
 1. update `STEAMSHIP_API_KEY` with your [Steamship API Key](https://www.steamship.com/account/api).
-2. update `STEAMSHIP_PACKAGE_HANDLE` with the package name you selected when deploying your Steamship Stack
-
-### Run or Deploy your Next.js Stack
+2. update `STEAMSHIP_PACKAGE_HANDLE` with the package name you selected when deploying your Steamship Stack.
+3. update `NEXT_PUBLIC_INDEX_NAME` with the index name you selected while adding your books.
+### Run your web app
 
 Run your Next.js stack in development mode:
 
@@ -75,4 +75,10 @@ yarn dev
 
 The app should be up and running at http://localhost:3000.
 
-When you like what you see, deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=steamship-ai-ask-my-book) ([Documentation](https://nextjs.org/docs/deployment)).
+### Deploy your web app
+
+You can deploy your web app with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=steamship-ai-ask-my-book) ([Documentation](https://nextjs.org/docs/deployment)) by clicking [here](https://vercel.com/new/clone?s=https%3A%2F%2Fgithub.com%2Fsteamship-core%2Fvercel-examples%2Ftree%2Fmain%2Fask-my-book-chatbot&showOptionalTeamCreation=false&teamCreateStatus=hidden).
+
+Please don't forget to add your [environment variables](https://vercel.com/docs/concepts/projects/environment-variables) in vercel.
+
+
