@@ -1,5 +1,6 @@
 import json
 from typing import Type, Optional, Dict, Any, List
+from uuid import uuid1
 
 import langchain
 from langchain import PromptTemplate
@@ -73,12 +74,12 @@ class AskMyBook(PackageService):
             template=qa_prompt_template, input_variables=["context", "question"]
         )
 
-        doc_chain = load_qa_chain(OpenAI(client=self.client, temperature=0, verbose=DEBUG),
+        doc_chain = load_qa_chain(OpenAI(client=self.client, model_name="gpt-3.5-turbo", temperature=0, verbose=DEBUG),
                                   chain_type="stuff",
                                   prompt=qa_prompt,
                                   verbose=DEBUG)
         question_chain = LLMChain(
-            llm=OpenAI(client=self.client, temperature=0, verbose=DEBUG),
+            llm=OpenAI(client=self.client, model_name="gpt-3.5-turbo", temperature=0, verbose=DEBUG),
             prompt=condense_question_prompt,
         )
         return ChatVectorDBChain(
@@ -98,7 +99,7 @@ class AskMyBook(PackageService):
         try:
             f = File.query(self.client, tag_filter_query=f'kind "AuthorTag" and name "{self.config.index_name}"')
             return f.files[0].tags[0].value
-        except Exception as e:
+        except Exception:
             return {}
 
     @post("/generate")
@@ -119,20 +120,20 @@ class AskMyBook(PackageService):
 
 
 if __name__ == "__main__":
-    index_name = "naval-ravikant"
+    index_name = "simon_sinek"
 
     package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
     answer = package.generate(
-        question="What is specific knowledge?",
-        chat_session_id="test123"
+        question="How to have a happy marriage?",
+        chat_session_id=str(uuid1())
     )
     print(answer)
 
-    answer = package.generate(
-        question="What is specific knowledge?",
-        chat_session_id="test123"
-    )
-    print(answer)
+    # answer = package.generate(
+    #     question="What is specific knowledge?",
+    #     chat_session_id="test123"
+    # )
+    # print(answer)
     # #
     # # answer = package.generate(
     # #     question="Could you explain this to a 5 year old?",
