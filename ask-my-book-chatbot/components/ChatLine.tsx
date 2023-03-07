@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import Balancer from 'react-wrap-balancer'
 import Source from "../components/Source";
 import { AuthorDetails } from '../pages';
+import { HiShieldExclamation } from 'react-icons/hi';
 
 const BalancerWrapper = (props: any) => <Balancer {...props} />
 
@@ -9,7 +10,8 @@ export type Message = {
   who: 'bot' | 'user' | undefined
   message?: string
   sources?: any
-  authorDetails?: AuthorDetails
+  authorDetails?: AuthorDetails,
+  isPlausible?: boolean,
 }
 
 // loading placeholder animation for the chat line
@@ -43,7 +45,8 @@ const convertNewLines = (text: string) =>
     </span>
   ))
 
-export function ChatLine({ who = 'bot', message, sources, authorDetails }: Message) {
+export function ChatLine({ who = 'bot', message, sources, authorDetails, isPlausible}: Message) {
+  console.log("isPlausible", isPlausible)
   if (!message) {
     return null
   }
@@ -72,6 +75,14 @@ export function ChatLine({ who = 'bot', message, sources, authorDetails }: Messa
                   {who == 'bot' ? authorDetails?.authorName || 'AI' : 'You'}
                 </a>
               </p>
+              {isPlausible === false && (
+
+<div className="flex flex-row items-center text-orange-600 mb-6">
+<HiShieldExclamation className="mr-2 h-5 w-5" />This answer might be incorrect given the sources.
+</div>
+
+
+              )}
               <p
                 className={clsx(
                   'text ',
