@@ -74,12 +74,12 @@ class AskMyBook(PackageService):
             template=qa_prompt_template, input_variables=["context", "question"]
         )
 
-        doc_chain = load_qa_chain(OpenAI(client=self.client, model_name="gpt-3.5-turbo", temperature=0, verbose=DEBUG),
+        doc_chain = load_qa_chain(OpenAI(client=self.client, temperature=0, verbose=DEBUG),
                                   chain_type="stuff",
                                   prompt=qa_prompt,
                                   verbose=DEBUG)
         question_chain = LLMChain(
-            llm=OpenAI(client=self.client, model_name="gpt-3.5-turbo", temperature=0, verbose=DEBUG),
+            llm=OpenAI(client=self.client, temperature=0, verbose=DEBUG),
             prompt=condense_question_prompt,
         )
         return ChatVectorDBChain(
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
     answer = package.generate(
-        question="How to have a happy marriage?",
+        question="test",
         chat_session_id=str(uuid1())
     )
     print(answer)
