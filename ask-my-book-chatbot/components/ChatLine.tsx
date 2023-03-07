@@ -46,7 +46,6 @@ const convertNewLines = (text: string) =>
   ))
 
 export function ChatLine({ who = 'bot', message, sources, authorDetails, isPlausible}: Message) {
-  console.log("isPlausible", isPlausible)
   if (!message) {
     return null
   }

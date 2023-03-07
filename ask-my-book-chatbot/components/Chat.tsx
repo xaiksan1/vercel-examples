@@ -70,18 +70,16 @@ export function Chat(props: ChatProps) {
   
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
+  const [chatSessionId, setChatSessionId] = useState(Math.random().toString(36).substring(7))
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
   const [error, setError] = useState<String | undefined>(undefined);
 
 
-  
-
   useEffect(() => {
-    console.log("cookie", cookie[COOKIE_NAME])
     if (!cookie[COOKIE_NAME]) {
-      // generate a semi random short id
-      resetChatSessionId()
+      setCookie(COOKIE_NAME, Math.random().toString(36).substring(7))
+
     }
   }, [cookie, setCookie])
 
@@ -122,8 +120,7 @@ export function Chat(props: ChatProps) {
 
 
   const resetChatSessionId = () => {
-    const chatSessionId = Math.random().toString(36).substring(7)
-    setCookie(COOKIE_NAME, chatSessionId)
+    setChatSessionId(Math.random().toString(36).substring(7))
   }
 
   const resetChatConversation = () => {
@@ -159,11 +156,11 @@ export function Chat(props: ChatProps) {
       },
       body: JSON.stringify({
         message: message, 
-        chatSessionId: cookie[COOKIE_NAME],
+        chatSessionId: chatSessionId,
+        cookie: cookie[COOKIE_NAME],
         dbId: dbId,
       }),
       })
-
     if (!response.ok) {
       setLoading(false);
       setError(response.statusText);
