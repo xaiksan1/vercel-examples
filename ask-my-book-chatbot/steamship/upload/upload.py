@@ -11,7 +11,8 @@ from utils import index_book
 INDEX_NAME = "test-123"  # Step 1: NAME YOUR INDEX
 
 BOOKS_OR_BOOK_FOLDERS = [
-    "uploads/authors/Naval Ravikant/the-almanack-of-naval-ravikant.pdf",
+    # "uploads/authors/Naval Ravikant/the-almanack-of-naval-ravikant.pdf",
+    "uploads/debug.pdf",
 ]  # Step 2: List the books or folders you want to index
 
 client = Steamship(workspace=INDEX_NAME)
@@ -34,7 +35,8 @@ for book in BOOKS_OR_BOOK_FOLDERS:
     book_path = Path(book)
 
     if book_path.is_dir():
-        for folder in Path("uploads/authors").iterdir():
+        for folder in book_path.iterdir():
             index_book(book_path, doc_index, books)
     else:
+        print("here")
         index_book(book_path, doc_index, books)
