@@ -7,6 +7,7 @@ from langchain import PromptTemplate
 from langchain.chains import ChatVectorDBChain
 from langchain.chains.llm import LLMChain
 from langchain.chains.question_answering import load_qa_chain
+from langchain.docstore.document import Document
 from steamship import Steamship, File
 from steamship.invocable import Config
 from steamship.invocable import PackageService, post, get
@@ -58,16 +59,17 @@ class AskMyBook(PackageService):
         qa_prompt_template = """I want you to ANSWER a QUESTION based on the following pieces of CONTEXT. 
 
         If you don't know the answer, just say that you don't know, don't try to make up an answer.
-
+        
         Your ANSWER should be analytical and straightforward. 
         Try to share deep, thoughtful insights and explain complex ideas in a simple and concise manner. 
         When appropriate use analogies and metaphors to illustrate your point. 
         Your ANSWER should have a strong focus on clarity, logic, and brevity.
-
-
+        Your ANSWER should be truthful and correct according to the given SOURCES
+        
         CONTEXT: {context}
-
+        
         QUESTION: {question}
+        
         ANSWER:
         """
         qa_prompt = PromptTemplate(
@@ -86,7 +88,8 @@ class AskMyBook(PackageService):
             vectorstore=doc_index,
             combine_docs_chain=doc_chain,
             question_generator=question_chain,
-            return_source_documents=True
+            return_source_documents=True,
+            top_k_docs_for_context=2
         )
 
     @get("/books")
@@ -102,8 +105,38 @@ class AskMyBook(PackageService):
         except Exception:
             return {}
 
-    @post("/generate")
-    def generate(self, question: str, chat_session_id: Optional[str] = None) -> Dict[str, Any]:
+    @post("/verify")
+    def verify(self, question: str, answer: str, sources: List[Document]) -> bool:
+        template = """I want you to verify the truthfulness and correctness of a given ANSWER. 
+
+        Answer "incorrect" if you think the ANSWER is incorrect in light of the SOURCES. 
+        Answer "correct" if you think the ANSWER is correct in light of the SOURCES. 
+
+        QUESTION: {question}
+
+        ANSWER: {answer}
+
+        SOURCES: {sources}
+
+        DECISION: """
+
+        if "I do not know" in answer or "I don't know" in answer or "No sources found" in answer:
+            return True
+        if not sources:
+            return False
+
+        llm_chain = LLMChain(
+            prompt=PromptTemplate(template=template, input_variables=["question", "answer", "sources"]),
+            llm=OpenAI(client=self.client)
+        )
+
+        response = llm_chain.run(question=question,
+                                 answer=answer,
+                                 sources="\n".join([doc.page_content for doc in sources]))
+        return "incorrect" not in response.lower()
+
+    @post("/answer")
+    def answer(self, question: str, chat_session_id: Optional[str] = None) -> Dict[str, Any]:
         chat_session_id = chat_session_id or self.config.default_chat_session_id
         chat_history = ChatHistory(self.client, chat_session_id)
 
@@ -114,42 +147,28 @@ class AskMyBook(PackageService):
             return {"answer": "No sources found to answer your question. Please try another question.",
                     "sources": result["source_documents"]}
 
-        chat_history.append(question, result["answer"])
+        answer = result["answer"]
+        sources = result["source_documents"]
+        chat_history.append(question, answer)
+        is_plausible = self.verify(question, answer, sources)
 
-        return {"answer": result["answer"].strip(), "sources": result["source_documents"]}
+        return {"answer": answer.strip(),
+                "sources": sources,
+                "is_plausible": is_plausible}
 
 
 if __name__ == "__main__":
     index_name = "simon_sinek"
-
     package = AskMyBook(client=Steamship(workspace=index_name), config={"index_name": index_name})
-    answer = package.generate(
-        question="test",
-        chat_session_id=str(uuid1())
-    )
-    print(answer)
 
-    # answer = package.generate(
-    #     question="What is specific knowledge?",
-    #     chat_session_id="test123"
-    # )
-    # print(answer)
-    # #
-    # # answer = package.generate(
-    # #     question="Could you explain this to a 5 year old?",
-    # #     chat_session_id="007"
-    # # )
-    # # print(answer)
-    #
-    # books = package.get_indexed_books()
-    # print(books)
-
-    # client = Steamship(workspace=index_name)
-    # pkg = client.use(package_handle="ask-my-book-chat-steamship-test", instance_handle="test1235ddddd55",
-    #                  config={"index_name": index_name})
-    # #
-    # d = pkg.invoke("/generate", question="What are the parts of a crisis card?", chat_session_id="007")
-    # print(d)
-    #
-    # books = pkg.invoke("/books", verb=Verb.GET)
-    # print(books)
+    for question in ["What color are bananas?", "This is a test", "how can I be happy?",
+                     "Who is the author of this book?"][:1]:
+        print("question", question)
+        answer = package.answer(
+            question=question,
+            chat_session_id=str(uuid1())
+        )
+        print(answer)
+        print("sources", answer["sources"])
+        verified = package.verify(question=question, answer=answer["answer"], sources=answer["sources"])
+        print(verified)
