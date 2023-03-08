@@ -24,7 +24,8 @@ const Layout: FC<LayoutProps> = ({
   let {dbId, authorId} = query
 
   let authorIdToBgImage = {
-    "grant_cardone": "https://i.ibb.co/PxNNhV7/Untitled-design-4.png"
+    "grant_cardone": "https://i.ibb.co/PxNNhV7/Untitled-design-4.png",
+    "naval_ravikant": "https://i.ibb.co/RbQQwhc/Untitled-design-5.png"
   }
 
   let bgImage = authorIdToBgImage[authorId as string]

@@ -56,7 +56,7 @@ function Home() {
     <Page className="flex flex-col gap-12 ">
       <section className="flex flex-col gap-6 " >
         {authorDetails ? 
-        (<Text variant="h1">{authorDetails.tagLine} with <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">{authorDetails.authorName}</span></Text>) : 
+        (<Text variant="h1">{authorDetails.tagLine || "Chat"} with <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">{authorDetails.authorName}</span></Text>) : 
         (<Text variant="h1">Chat with your books 🧠</Text>)}
         {isReady ? <Documents dbId={dbId}/>: <div/>}
       </section>
