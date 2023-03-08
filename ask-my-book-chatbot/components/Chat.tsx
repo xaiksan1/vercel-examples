@@ -177,6 +177,15 @@ export function Chat(props: ChatProps) {
       } 
   }
 
+  if (messages.length == 1 && authorDetails && messages == initialMessages){
+    setMessages([
+      {
+        who: 'bot',
+        message: authorDetails.firstMessage || "Hey! 😎",
+      },
+    ])
+  }
+
   return (
     <div>
     <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">

@@ -3,12 +3,15 @@ import Head from 'next/head.js'
 import Nav, { NavProps } from './Nav'
 import Logo from './Steamship'
 import { ComponentType } from 'react'
+import { useRouter } from 'next/router'
 
 export interface LayoutProps extends NavProps {
   children?: ReactNode
   title?: string
   description?: string
 }
+
+
 
 const Layout: FC<LayoutProps> = ({
   title,
@@ -17,8 +20,18 @@ const Layout: FC<LayoutProps> = ({
   deployButton,
   children,
 }) => {
+  const {query} = useRouter()
+  let {dbId, authorId} = query
+
+  let authorIdToBgImage = {
+    "grant_cardone": "https://i.ibb.co/PxNNhV7/Untitled-design-4.png"
+  }
+
+  let bgImage = authorIdToBgImage[authorId as string]
+
   return (
-    <div className="mx-auto h-screen flex flex-col">
+    <div className="mx-auto h-screen flex flex-col bg-scroll bg-contain bg-no-repeat bg-right-bottom"
+    style={{backgroundImage: "url(" + bgImage + ")"}}>
       <Head>
         {title && <title>{`${title} - Steamship + Vercel Examples`}</title>}
         {description && <meta name="description" content={description} />}

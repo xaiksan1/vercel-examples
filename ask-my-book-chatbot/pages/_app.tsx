@@ -12,6 +12,7 @@ function App({ Component, pageProps }: AppProps) {
       title="ask-my-book-chatbot"
       path="ask-my-book-chatbot"
       description="ai-chatbot-that-understands-your-book"
+      
     >
       <Component {...pageProps} />
       <Analytics />
