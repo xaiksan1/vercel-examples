@@ -1,3 +1,4 @@
 steamship==2.3.13
 langchain==0.0.78
 steamship-langchain
+pydantic>=1.10.13 # not directly required, pinned by Snyk to avoid a vulnerability
