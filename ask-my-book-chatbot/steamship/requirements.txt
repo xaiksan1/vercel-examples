@@ -1,1 +1,2 @@
 steamship_langchain==0.0.13
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
