@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@steamship/client": "^2.3.0",
+    "@steamship/client": "^3.0.0",
     "@steamship/steamship-nextjs": "^1.0.3",
     "@vercel/analytics": "^0.1.10",
     "@vercel/examples-ui": "^1.0.4",
