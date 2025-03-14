@@ -21,7 +21,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-wrap-balancer": "^0.1.5",
-    "vercel": "^28.16.2"
+    "vercel": "^28.17.0"
   },
   "devDependencies": {
     "@types/node": "^17",
